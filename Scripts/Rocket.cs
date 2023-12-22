@@ -24,4 +24,14 @@ public partial class Rocket : Area2D
 	{
         QueueFree();
 	}
+
+	public void _on_area_entered(Area2D area)
+	{
+		if(area is Enemy)
+		{
+			var enemy = (Enemy)area;
+            enemy.Die();
+			QueueFree();
+		}
+	}
 }

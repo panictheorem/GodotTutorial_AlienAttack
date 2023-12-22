@@ -1,9 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://cebltv8h8xtfh"]
+[gd_scene load_steps=9 format=3 uid="uid://cebltv8h8xtfh"]
 
+[ext_resource type="Script" path="res://Scripts/Game.cs" id="1_77xo7"]
 [ext_resource type="Texture2D" uid="uid://difkq0ycx2iba" path="res://Assets/textures/bg.png" id="1_fbmt5"]
 [ext_resource type="PackedScene" uid="uid://cww8nvn00hho6" path="res://Scenes/Player.tscn" id="2_8h0ty"]
+[ext_resource type="PackedScene" uid="uid://bcc77mefkq82a" path="res://Scenes/Hud.tscn" id="2_sun05"]
+[ext_resource type="PackedScene" uid="uid://qs6oy2r4qb2x" path="res://Scenes/GameOverScreen.tscn" id="2_td8dk"]
+[ext_resource type="PackedScene" uid="uid://cc7wqtvmnb87i" path="res://Scenes/EnemySpawner.tscn" id="3_l1hos"]
+[ext_resource type="AudioStream" uid="uid://crx5syp1f34be" path="res://Assets/audio/hit.wav" id="7_vk6de"]
+[ext_resource type="AudioStream" uid="uid://cy414otvdtroq" path="res://Assets/audio/explode.wav" id="8_id5qo"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("Hud")]
+script = ExtResource("1_77xo7")
+Hud = NodePath("UI/HUD")
+GameOverScreen = ExtResource("2_td8dk")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="UI" instance=ExtResource("2_sun05")]
 
 [node name="Background" type="TextureRect" parent="."]
 offset_right = 1288.0
@@ -13,3 +26,14 @@ stretch_mode = 1
 
 [node name="Player" parent="." instance=ExtResource("2_8h0ty")]
 position = Vector2(79, 397)
+
+[node name="EnemySpawner" parent="." instance=ExtResource("3_l1hos")]
+
+[node name="EnemyHitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_vk6de")
+
+[node name="PlayerTakeDamageSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_id5qo")
+
+[connection signal="TookDamage" from="Player" to="." method="_on_player_took_damage"]
+[connection signal="EnemySpawned" from="EnemySpawner" to="." method="_on_enemy_spawner_enemy_spawned"]

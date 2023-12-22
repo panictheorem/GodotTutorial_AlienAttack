@@ -1,7 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://cww8nvn00hho6"]
+[gd_scene load_steps=12 format=3 uid="uid://cww8nvn00hho6"]
 
-[ext_resource type="Script" path="res://Player.cs" id="1_cr278"]
+[ext_resource type="Script" path="res://Scripts/Player.cs" id="1_dbwfd"]
 [ext_resource type="Texture2D" uid="uid://bv33a83ppemxc" path="res://Assets/textures/player_ship.png" id="2_ee5i8"]
+[ext_resource type="AudioStream" uid="uid://cw1m4pf6n64tt" path="res://Assets/audio/sfx_laser2.wav" id="3_de2sc"]
+
+[sub_resource type="Gradient" id="Gradient_wndcf"]
+offsets = PackedFloat32Array(0.147541, 0.778689, 0.967213)
+colors = PackedColorArray(1, 0.984314, 0.0117647, 0, 0.96, 0.00959999, 0.0254398, 1, 0.960784, 0.00784314, 0.0235294, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_k57jo"]
+gradient = SubResource("Gradient_wndcf")
+
+[sub_resource type="Curve" id="Curve_8x46h"]
+min_value = -200.0
+max_value = 200.0
+_data = [Vector2(0, -107.692), 0.0, 0.0, 0, 0, Vector2(0.993333, 125.275), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_b2l1h"]
+curve = SubResource("Curve_8x46h")
+
+[sub_resource type="Curve" id="Curve_h03an"]
+_data = [Vector2(0, 0.472527), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_54yyc"]
+curve = SubResource("Curve_h03an")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u8ol6"]
+lifetime_randomness = 0.3
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1, 15, 1)
+spread = 10.0
+initial_velocity_min = -150.0
+initial_velocity_max = -150.0
+gravity = Vector3(0, 0, 0)
+linear_accel_min = 1.0
+linear_accel_max = 1.0
+linear_accel_curve = SubResource("CurveTexture_b2l1h")
+scale_min = 10.0
+scale_max = 10.0
+scale_curve = SubResource("CurveTexture_54yyc")
+color_ramp = SubResource("GradientTexture1D_k57jo")
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mbn2b"]
 radius = 20.0
@@ -9,8 +50,15 @@ height = 92.0
 
 [node name="Player" type="CharacterBody2D"]
 rotation = 1.5708
+collision_mask = 2
 motion_mode = 1
-script = ExtResource("1_cr278")
+script = ExtResource("1_dbwfd")
+
+[node name="FlameParticleEffect" type="GPUParticles2D" parent="."]
+position = Vector2(1, 8)
+rotation = -1.5708
+amount = 200
+process_material = SubResource("ParticleProcessMaterial_u8ol6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.2, 0.2)
@@ -22,3 +70,6 @@ rotation = 1.5708
 shape = SubResource("CapsuleShape2D_mbn2b")
 
 [node name="RocketContainer" type="Node" parent="."]
+
+[node name="RocketShotSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_de2sc")

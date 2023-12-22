@@ -3,14 +3,17 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
-	public const float Speed = 500.0f;
+    [Signal]
+    public delegate void TookDamageEventHandler();
+    public const float Speed = 500.0f;
     public PackedScene RocketScene { get; set; }
     public Node RocketContainer { get; set; }
+    public AudioStreamPlayer2D RocketShotSound { get; set; }
     public override void _Ready()
     {
         RocketScene = (PackedScene)GD.Load("res://Scenes/Rocket.tscn");
         RocketContainer = GetNode("RocketContainer");
-        GD.Print(RocketContainer.Name + " stuff");
+        RocketShotSound = GetNode<AudioStreamPlayer2D>("RocketShotSound");
     }
 
 
@@ -60,5 +63,16 @@ public partial class Player : CharacterBody2D
         RocketContainer.AddChild(rocketInstance);
         rocketInstance.GlobalPosition = GlobalPosition;
         rocketInstance.GlobalPosition += new Vector2(65, 0);
+        RocketShotSound.Play();
+    }
+
+    public void TakeDamage()
+    {
+        EmitSignal(SignalName.TookDamage);
+    }
+
+    public void Die()
+    {
+        QueueFree();
     }
 }
